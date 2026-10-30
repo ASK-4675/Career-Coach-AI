@@ -4,7 +4,10 @@
  * Credentials (session cookies) are always sent.
  */
 
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+// In production the frontend is served by Express at the same origin,
+// so we use a relative path (/api). VITE_API_URL only needs to be set
+// during local development if the ports differ (e.g. Vite on 5173, Express on 5002).
+const BASE = import.meta.env.VITE_API_URL || "/api";
 
 async function request(method, endpoint, body = null) {
   const opts = {

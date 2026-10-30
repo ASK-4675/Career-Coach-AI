@@ -42,6 +42,18 @@ router.get("/", async (req, res) => {
 
 // ── PUT /api/profile ─────────────────────────────────────────
 router.put("/", validate(profileRules), async (req, res) => {
+  // Accept aliases from frontend payload
+  if (req.body.name && !req.body.full_name) {
+    req.body.full_name = req.body.name;
+  }
+  // Ensure skills is an array even if sent as a comma‑separated string
+  if (req.body.skills && typeof req.body.skills === "string") {
+    try {
+      req.body.skills = JSON.parse(req.body.skills);
+    } catch {
+      req.body.skills = req.body.skills.split(',').map(s => s.trim()).filter(Boolean);
+    }
+  }
   try {
     const userId = req.session.userId;
     const {

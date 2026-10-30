@@ -64,11 +64,23 @@ export const ProfileSetupPage = () => {
   const isCrossDisciplinary = !selectedRoleObj.recommendedDepts.includes(departmentId);
 
   const handleAddSkill = (e) => {
-    e.preventDefault();
-    if (newSkillInput.trim() && !skills.includes(newSkillInput.trim())) {
-      setSkills([...skills, newSkillInput.trim()]);
-      setNewSkillInput("");
-      setErrorMsg("");
+    // Works from both button click and Enter key press
+    if (e && e.preventDefault) e.preventDefault();
+    const trimmed = newSkillInput.trim();
+    if (!trimmed) return;
+    if (skills.includes(trimmed)) {
+      showToast("Skill already added!", "error");
+      return;
+    }
+    setSkills((prev) => [...prev, trimmed]);
+    setNewSkillInput("");
+    setErrorMsg("");
+  };
+
+  const handleSkillKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // prevent wizard form from submitting
+      handleAddSkill(e);
     }
   };
 
@@ -471,6 +483,7 @@ export const ProfileSetupPage = () => {
                   placeholder="e.g. Python, React, SQL, AutoCAD, C++..."
                   value={newSkillInput}
                   onChange={(e) => setNewSkillInput(e.target.value)}
+                  onKeyDown={handleSkillKeyDown}
                 />
                 <Button size="sm" variant="secondary" type="button" onClick={handleAddSkill}>
                   <Plus size={16} />

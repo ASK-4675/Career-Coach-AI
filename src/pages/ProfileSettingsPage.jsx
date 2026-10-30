@@ -92,10 +92,21 @@ export const ProfileSettingsPage = () => {
   };
 
   const handleAddSkill = (e) => {
-    e.preventDefault();
-    if (newSkillInput.trim() && !skills.includes(newSkillInput.trim())) {
-      setSkills([...skills, newSkillInput.trim()]);
-      setNewSkillInput("");
+    if (e && e.preventDefault) e.preventDefault();
+    const trimmed = newSkillInput.trim();
+    if (!trimmed) return;
+    if (skills.includes(trimmed)) {
+      showToast("Skill already added!", "error");
+      return;
+    }
+    setSkills((prev) => [...prev, trimmed]);
+    setNewSkillInput("");
+  };
+
+  const handleSkillKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddSkill(e);
     }
   };
 
@@ -447,6 +458,7 @@ export const ProfileSettingsPage = () => {
                   placeholder="Add skill (e.g. Docker, Python, SolidWorks)..."
                   value={newSkillInput}
                   onChange={(e) => setNewSkillInput(e.target.value)}
+                  onKeyDown={handleSkillKeyDown}
                 />
                 <Button size="sm" variant="secondary" type="button" onClick={handleAddSkill}>
                   <Plus size={16} />
